@@ -136,10 +136,12 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
 
-        val user = User(uid, email, imageUrl)
+        val user = User(uid, username, imageUrl, email)
 
         ref.setValue(user).addOnSuccessListener {
-            Log.d("DATABASE", "saveUserToFirebaseDatabase: $it")
+            val intent = Intent(this, LatestMessagesActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent);
         }.addOnFailureListener{
             Log.d("DATABASE", "saveUserToFirebaseDatabase: ${it.message}")
         }
