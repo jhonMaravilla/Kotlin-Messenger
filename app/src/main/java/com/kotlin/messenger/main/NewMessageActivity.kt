@@ -1,14 +1,15 @@
-package com.kotlin.messenger
+package com.kotlin.messenger.main
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.kotlin.messenger.R
 import com.kotlin.messenger.model.User
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
@@ -46,9 +47,17 @@ class NewMessageActivity : AppCompatActivity() {
 
                 }
 
+                adapter.setOnItemClickListener { item, view ->
+                    val userItem = item as UserItem
+
+                    val intent = Intent(view.context, ChatLogActivity::class.java)
+                    intent.putExtra("MESSAGE_TO", userItem.user)
+                    startActivity(intent)
+                    finish()
+                }
+
                 newmessage_recyclerview.adapter = adapter
                 newmessage_recyclerview.layoutManager = LinearLayoutManager(context)
-
 
             }
 

@@ -1,7 +1,6 @@
-package com.kotlin.messenger
+package com.kotlin.messenger.authentication
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
@@ -13,14 +12,13 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 
-import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
+import com.kotlin.messenger.R
+import com.kotlin.messenger.main.LatestMessagesActivity
 import com.kotlin.messenger.model.User
 
 import kotlinx.android.synthetic.main.activity_main.*

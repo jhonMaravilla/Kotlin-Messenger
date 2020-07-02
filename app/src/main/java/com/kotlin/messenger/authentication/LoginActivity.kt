@@ -1,5 +1,6 @@
-package com.kotlin.messenger
+package com.kotlin.messenger.authentication
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -7,8 +8,9 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.kotlin.messenger.R
+import com.kotlin.messenger.main.LatestMessagesActivity
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_login.view.*
 
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -53,7 +55,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 return@addOnCompleteListener
             }
 
-            Toast.makeText(this, "Logging in...", Toast.LENGTH_LONG).show()
+            val intent = Intent(this, LatestMessagesActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent);
         }
     }
 

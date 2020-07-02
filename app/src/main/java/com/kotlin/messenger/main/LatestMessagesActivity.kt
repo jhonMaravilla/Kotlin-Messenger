@@ -1,4 +1,4 @@
-package com.kotlin.messenger
+package com.kotlin.messenger.main
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -6,7 +6,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
+import com.kotlin.messenger.R
+import com.kotlin.messenger.authentication.RegisterActivity
 
 class LatestMessagesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
