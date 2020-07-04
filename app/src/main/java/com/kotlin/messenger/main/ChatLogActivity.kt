@@ -15,6 +15,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.kotlin.messenger.R
 import com.kotlin.messenger.model.Message
 import com.kotlin.messenger.model.User
+import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
@@ -26,13 +27,14 @@ import java.util.*
 
 class ChatLogActivity : AppCompatActivity(), View.OnClickListener {
     val adapter = GroupAdapter<GroupieViewHolder>()
+    var toUser: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_log)
 
-        val user = intent.getParcelableExtra<User>("MESSAGE_TO")
-        supportActionBar?.title = user.username
+        toUser = intent.getParcelableExtra<User>("MESSAGE_TO")
+        supportActionBar?.title = toUser?.username
 
         chatlog_btn_send.setOnClickListener(this)
 
@@ -47,7 +49,7 @@ class ChatLogActivity : AppCompatActivity(), View.OnClickListener {
 
         reference.addChildEventListener(object : ChildEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                TODO("Not yet implemented")
+                Log.e("TAG", p0.toString());
             }
 
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {
@@ -62,10 +64,12 @@ class ChatLogActivity : AppCompatActivity(), View.OnClickListener {
                 val chatMessage = p0.getValue(Message::class.java)
 
                 if (chatMessage != null) {
-                    if (chatMessage.fromID == FirebaseAuth.getInstance().uid) {
-                        adapter.add(ChatFromMe(chatMessage.text))
-                    } else {
-                        adapter.add(ChatFromUser(chatMessage.text))
+                    if (chatMessage.fromID == FirebaseAuth.getInstance().uid && chatMessage.toID == toUser!!.uid) {
+                            val currentUser = LatestMessagesActivity.currentUser
+                            adapter.add(ChatFromMe(chatMessage.text, currentUser ?: return))
+                    } else if(chatMessage.fromID == toUser!!.uid && chatMessage.toID == FirebaseAuth.getInstance().uid){
+                            adapter.add(ChatFromUser(chatMessage.text, toUser!!))
+
                     }
                 }
             }
@@ -115,9 +119,10 @@ class ChatLogActivity : AppCompatActivity(), View.OnClickListener {
         reference.setValue(chatMessage)
             .addOnSuccessListener {
                 chatlog_etxt_message.setText("")
+                chatlog_recyclerview.scrollToPosition(adapter.itemCount - 1)
             }
             .addOnFailureListener {
-                Log.d("PUSH", "sendMessage: FAILED")
+
             }
 
     }
@@ -125,24 +130,30 @@ class ChatLogActivity : AppCompatActivity(), View.OnClickListener {
 
 
 // FOR GROUPIE RECYCLERVIEW
-class ChatFromUser(val text: String) : Item<GroupieViewHolder>() {
+class ChatFromUser(val text: String, val user: User) : Item<GroupieViewHolder>() {
     override fun getLayout(): Int {
         return R.layout.layout_chat_from_user
     }
 
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.itemView.fromuser_txt_message.text = text
+
+        val uri = user.profileImageUrl
+        Picasso.get().load(uri).into(viewHolder.itemView.fromuser_img_thumbnail)
     }
 
 }
 
-class ChatFromMe(val text: String) : Item<GroupieViewHolder>() {
+class ChatFromMe(val text: String, val user: User) : Item<GroupieViewHolder>() {
     override fun getLayout(): Int {
         return R.layout.layout_chat_from_me
     }
 
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.itemView.fromme_txt_message.text = text
+
+        val uri = user.profileImageUrl
+        Picasso.get().load(uri).into(viewHolder.itemView.fromme_img_thumbnail)
     }
 
 }
