@@ -49,15 +49,15 @@ class ChatLogActivity : AppCompatActivity(), View.OnClickListener {
 
         reference.addChildEventListener(object : ChildEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                Log.e("TAG", p0.toString());
+
             }
 
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
@@ -69,13 +69,14 @@ class ChatLogActivity : AppCompatActivity(), View.OnClickListener {
                             adapter.add(ChatFromMe(chatMessage.text, currentUser ?: return))
                     } else if(chatMessage.fromID == toUser!!.uid && chatMessage.toID == FirebaseAuth.getInstance().uid){
                             adapter.add(ChatFromUser(chatMessage.text, toUser!!))
-
                     }
                 }
+
+                chatlog_recyclerview.scrollToPosition(adapter.itemCount - 1)
             }
 
             override fun onChildRemoved(p0: DataSnapshot) {
-                TODO("Not yet implemented")
+
             }
 
         })
@@ -124,6 +125,12 @@ class ChatLogActivity : AppCompatActivity(), View.OnClickListener {
             .addOnFailureListener {
 
             }
+
+        val latestMessageRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromID/$toID")
+        latestMessageRef.setValue(chatMessage)
+
+        val latestMessageToRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$toID/$fromID")
+        latestMessageToRef.setValue(chatMessage)
 
     }
 }
